@@ -1,0 +1,28 @@
+# Python cache and build files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Poetry files
+poetry.lock
+
+# VS Code settings
+.vscode/
+
+# Environment files
+.env
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Test and coverage
+htmlcov/
+.coverage
+
+# Results and output
+/results/
+
+# Other
+*.log
