@@ -1,3 +1,7 @@
 CREATE TABLE IF NOT EXISTS iplocate__ip_v4 (
-    -- SQL HERE
+   ip_start BIGINT,
+   ip_end BIGINT,
+   continent_code VARCHAR(4),
+   country_code VARCHAR(4),
+   country_name VARCHAR(64)
 );

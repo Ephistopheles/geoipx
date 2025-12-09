@@ -9,7 +9,7 @@ class GeoIPXDataBase:
         if cls._instance is None:
            cls._instance = super().__new__(cls)
            
-           cls._db_path = Path.home() / ".geoipx" / "geoipx.duckdb"
+           cls._db_path = Path.home() / ".geoipx" / "db" / "geoipx.duckdb"
            cls._db_path.parent.mkdir(parents=True, exist_ok=True)
            
            cls._connection = duckdb.connect(database=str(cls._db_path), read_only=False)
