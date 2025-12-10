@@ -6,8 +6,8 @@ WITH raw AS (
         col3 AS country_code,
         col4 AS region_code,
         col5 AS city_name,
-        NULLIF(col6, '')::DOUBLE AS latitude,
-        NULLIF(col7, '')::DOUBLE AS longitude
+        col6 AS latitude,
+        col7 AS longitude
     FROM read_csv('{csv_path}',
         header = false,
         quote = '"',

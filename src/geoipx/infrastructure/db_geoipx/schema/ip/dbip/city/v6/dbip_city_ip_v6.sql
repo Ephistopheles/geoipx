@@ -5,6 +5,6 @@ CREATE TABLE IF NOT EXISTS dbip__city__ip_v6 (
    country_code VARCHAR(4),
    region_code VARCHAR(4),
    city_name VARCHAR(64),
-   latitude DOUBLE,
-   longitude DOUBLE
+   latitude VARCHAR(24),
+   longitude VARCHAR(24)
 );
