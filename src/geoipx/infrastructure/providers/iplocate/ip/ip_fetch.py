@@ -50,18 +50,18 @@ class IPLocateIPFetcher:
 
         conn = GeoIPXDataBase().conn
 
-        schema_base = Path(__file__).parents[3] / "db_geoipx" / "schema" / "ip" / "iplocate"
+        schema_base = Path(__file__).parents[3] / "db_geoipx" / "schema" / "ip" / "iplocate" / "country"
 
-        create_v4_sql = (schema_base / "v4" / "iplocate_ip_v4.sql").read_text()
-        create_v6_sql = (schema_base / "v6" / "iplocate_ip_v6.sql").read_text()
+        create_v4_sql = (schema_base / "v4" / "iplocate_country_ip_v4.sql").read_text()
+        create_v6_sql = (schema_base / "v6" / "iplocate_country_ip_v6.sql").read_text()
 
         conn.execute(create_v4_sql)
         conn.execute(create_v6_sql)
 
-        loaders_base = Path(__file__).parents[3] / "db_geoipx" / "queries" / "loaders" / "iplocate" / "ip"
+        loaders_base = Path(__file__).parents[3] / "db_geoipx" / "queries" / "loaders" / "iplocate" / "ip" / "country"
 
-        loader_v4 = (loaders_base / "v4" / "loader_ip_v4.sql").read_text().replace("{csv_path}", str(tmp_csv_path))
-        loader_v6 = (loaders_base / "v6" / "loader_ip_v6.sql").read_text().replace("{csv_path}", str(tmp_csv_path))
+        loader_v4 = (loaders_base / "v4" / "iplocate_loader_country_ip_v4.sql").read_text().replace("{csv_path}", str(tmp_csv_path))
+        loader_v6 = (loaders_base / "v6" / "iplocate_loader_country_ip_v6.sql").read_text().replace("{csv_path}", str(tmp_csv_path))
 
         conn.execute(loader_v4)
         conn.execute(loader_v6)

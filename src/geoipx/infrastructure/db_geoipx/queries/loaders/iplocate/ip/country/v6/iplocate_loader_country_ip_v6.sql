@@ -17,7 +17,7 @@ WITH raw AS (
         }
     )
 )
-INSERT INTO iplocate__ip_v4 (
+INSERT INTO iplocate__country__ip_v6 (
     network,
     continent_code,
     country_code,
@@ -29,4 +29,4 @@ SELECT
     country_code,
     country_name
 FROM raw
-WHERE family(network) = 4;
+WHERE family(network) = 6;
