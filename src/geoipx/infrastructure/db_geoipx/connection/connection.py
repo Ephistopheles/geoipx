@@ -13,6 +13,9 @@ class GeoIPXDataBase:
            cls._db_path.parent.mkdir(parents=True, exist_ok=True)
            
            cls._connection = duckdb.connect(database=str(cls._db_path), read_only=False)
+
+           cls._connection.execute("INSTALL inet;")
+           cls._connection.execute("LOAD inet;")
            
         return cls._instance
     
