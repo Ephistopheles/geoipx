@@ -21,7 +21,7 @@ WITH raw AS (
         }
     )
 )
-INSERT INTO iplocate__asn_v4 (
+INSERT INTO iplocate_asn_v4 (
     network,
     asn,
     country_code,

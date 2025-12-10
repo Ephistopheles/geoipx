@@ -15,7 +15,7 @@ WITH raw AS (
         }
     )
 )
-INSERT INTO dbip__country__ip_v4 (
+INSERT INTO dbip_country_ip_v4 (
     ip_start,
     ip_end,
     country_code

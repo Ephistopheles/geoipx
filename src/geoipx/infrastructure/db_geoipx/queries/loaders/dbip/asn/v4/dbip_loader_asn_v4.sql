@@ -17,7 +17,7 @@ WITH raw AS (
         }
     )
 )
-INSERT INTO dbip__asn_v4 (
+INSERT INTO dbip_asn_v4 (
     ip_start,
     ip_end,
     asn,

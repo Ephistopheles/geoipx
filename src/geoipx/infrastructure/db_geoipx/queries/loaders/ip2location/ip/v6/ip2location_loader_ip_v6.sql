@@ -29,7 +29,7 @@ WITH raw AS (
         }
     )
 )
-INSERT INTO ip2location__ip_v6 (
+INSERT INTO ip2location_ip_v6 (
     ip_start,
     ip_end,
     country_code,

@@ -25,7 +25,7 @@ WITH raw AS (
         }
     )
 )
-INSERT INTO dbip__city__ip_v6 (
+INSERT INTO dbip_city_ip_v6 (
     ip_start,
     ip_end,
     continent_code,

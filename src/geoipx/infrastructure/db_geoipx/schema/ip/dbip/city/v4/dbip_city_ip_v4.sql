@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS dbip__city__ip_v4 (
+CREATE TABLE IF NOT EXISTS dbip_city_ip_v4 (
    ip_start INET,
    ip_end INET,
    continent_code VARCHAR(4),

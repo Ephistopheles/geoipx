@@ -4,12 +4,14 @@ import requests
 from pathlib import Path
 from datetime import datetime
 from geoipx.infrastructure.db_geoipx.connection.connection import GeoIPXDataBase
+from geoipx.infrastructure.providers.iplocate.config.config import IPLocateConfig
 
 IPLOCATE_IP_COUNTRY_URL = "https://github.com/iplocate/ip-address-databases/raw/refs/heads/main/ip-to-country/ip-to-country.csv.zip"
 
 class IPLocateCountryIPFetcher:
 
-    TMP_DIR = Path.home() / ".geoipx" / "tmp" / "iplocate"
+    def __init__(self):
+        self.config = IPLocateConfig()
     
     def fetch(self):
         try:
@@ -43,27 +45,33 @@ class IPLocateCountryIPFetcher:
             raise ValueError("Invalid ZIP file") from e
 
     def _load_into_duckdb(self, csv_bytes: bytes):
-        self.TMP_DIR.mkdir(parents=True, exist_ok=True)
-        tmp_csv_path = self.TMP_DIR / f"iplocate_ip_country_{datetime.now().strftime('%Y%m%d%H%M%S')}.csv"
+        cfg = self.config
+        
+        cfg.get_temp_path().mkdir(parents=True, exist_ok=True)
 
+        tmp_csv_path = cfg.get_temp_csv_path()
         tmp_csv_path.write_bytes(csv_bytes)
 
-        conn = GeoIPXDataBase().conn
+        db = GeoIPXDataBase()
+        conn = db.conn
 
-        schema_base = Path(__file__).parents[4] / "db_geoipx" / "schema" / "ip" / "iplocate" / "country"
+        try:
+            db.begin_transaction()
 
-        create_v4_sql = (schema_base / "v4" / "iplocate_country_ip_v4.sql").read_text()
-        create_v6_sql = (schema_base / "v6" / "iplocate_country_ip_v6.sql").read_text()
+            conn.execute(cfg.sql_drop_v4())
+            conn.execute(cfg.sql_drop_v6())
 
-        conn.execute(create_v4_sql)
-        conn.execute(create_v6_sql)
+            conn.execute(cfg.sql_create_v4())
+            conn.execute(cfg.sql_create_v6())
 
-        loaders_base = Path(__file__).parents[4] / "db_geoipx" / "queries" / "loaders" / "iplocate" / "ip" / "country"
+            conn.execute(cfg.sql_loader_v4(tmp_csv_path))
+            conn.execute(cfg.sql_loader_v6(tmp_csv_path))
 
-        loader_v4 = (loaders_base / "v4" / "iplocate_loader_country_ip_v4.sql").read_text().replace("{csv_path}", str(tmp_csv_path))
-        loader_v6 = (loaders_base / "v6" / "iplocate_loader_country_ip_v6.sql").read_text().replace("{csv_path}", str(tmp_csv_path))
+            db.commit_transaction()
+        except Exception as e:
+            db.rollback_transaction()
+            raise e
+        finally:
+            tmp_csv_path.unlink(missing_ok=True)
 
-        conn.execute(loader_v4)
-        conn.execute(loader_v6)
-        
-        tmp_csv_path.unlink()
+IPLocateCountryIPFetcher().fetch()

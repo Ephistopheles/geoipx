@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS ip2location__ip_v6 (
+CREATE TABLE IF NOT EXISTS ip2location_ip_v6 (
     ip_start VARCHAR(39),
     ip_end VARCHAR(39),
     country_code VARCHAR(2),

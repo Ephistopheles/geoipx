@@ -17,7 +17,7 @@ WITH raw AS (
         }
     )
 )
-INSERT INTO iplocate__country__ip_v4 (
+INSERT INTO iplocate_country_ip_v4 (
     network,
     continent_code,
     country_code,
