@@ -8,6 +8,7 @@ WITH raw AS (
         header = true,
         quote = '"',
         auto_detect = false,
+        strict_mode = false,
         columns = {
             'network': 'VARCHAR',
             'continent_code': 'VARCHAR',

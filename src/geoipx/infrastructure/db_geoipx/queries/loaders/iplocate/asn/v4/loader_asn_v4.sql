@@ -1,9 +1,11 @@
 WITH raw AS (
     SELECT
         network::INET AS network,
-        continent_code,
+        asn,
         country_code,
-        country_name
+        name,
+        org,
+        domain
     FROM read_csv('{csv_path}',
         header = true,
         quote = '"',
@@ -11,22 +13,28 @@ WITH raw AS (
         strict_mode = false,
         columns = {
             'network': 'VARCHAR',
-            'continent_code': 'VARCHAR',
+            'asn': 'VARCHAR',
             'country_code': 'VARCHAR',
-            'country_name': 'VARCHAR'
+            'name': 'VARCHAR',
+            'org': 'VARCHAR',
+            'domain': 'VARCHAR'
         }
     )
 )
-INSERT INTO iplocate__ip_v4 (
+INSERT INTO iplocate__asn_v4 (
     network,
-    continent_code,
+    asn,
     country_code,
-    country_name
+    name,
+    org,
+    domain
 )
 SELECT
     network,
-    continent_code,
+    asn,
     country_code,
-    country_name
+    name,
+    org,
+    domain
 FROM raw
 WHERE family(network) = 4;
