@@ -60,8 +60,8 @@ class IPLocateASNFetcher:
 
         loaders_base = Path(__file__).parents[3] / "db_geoipx" / "queries" / "loaders" / "iplocate" / "asn"
 
-        loader_v4 = (loaders_base / "v4" / "loader_asn_v4.sql").read_text().replace("{csv_path}", str(tmp_csv_path))
-        loader_v6 = (loaders_base / "v6" / "loader_asn_v6.sql").read_text().replace("{csv_path}", str(tmp_csv_path))
+        loader_v4 = (loaders_base / "v4" / "iplocate_loader_asn_v4.sql").read_text().replace("{csv_path}", str(tmp_csv_path))
+        loader_v6 = (loaders_base / "v6" / "iplocate_loader_asn_v6.sql").read_text().replace("{csv_path}", str(tmp_csv_path))
 
         conn.execute(loader_v4)
         conn.execute(loader_v6)
