@@ -2,18 +2,13 @@ import io
 import zipfile
 import requests
 from pathlib import Path
-from datetime import datetime
 from geoipx.infrastructure.db_geoipx.connection.connection import GeoIPXDataBase
-
-TOKEN_IP2LOCATION = "LbLuGQmzPOLDBiQ4RpY2bb5kAam7oI8pcU0JyoWfa3qhtu4XItCRIahrLwgERYx4"
-
-DATABASE_CODE_IP2LOCATION = "DB11LITECSVIPV6"
-
-IP2LOCATION_V6_URL = f"https://www.ip2location.com/download/?token={TOKEN_IP2LOCATION}&file={DATABASE_CODE_IP2LOCATION}"
+from geoipx.infrastructure.providers.ip2location.config_provider.config_ip2location import IP2LocationConfig
 
 class IP2LocationIPV6Fetcher:
 
-    TMP_DIR = Path.home() / ".geoipx" / "tmp" / "ip2location"
+    def __init__(self):
+        self.config = IP2LocationConfig()
 
     def fetch(self):
         try:
@@ -25,13 +20,13 @@ class IP2LocationIPV6Fetcher:
     
     def _download(self) -> bytes:
         try:
-            res = requests.get(IP2LOCATION_V6_URL, timeout=30)
+            res = requests.get(self.config.get_url_ip_v6(), timeout=30)
             res.raise_for_status()
             return res.content
         except requests.exceptions.Timeout as e:
-            raise TimeoutError(f"Request to {IP2LOCATION_V6_URL} timed out") from e
+            raise TimeoutError(f"Request to {self.config.get_url_ip_v6()} timed out") from e
         except requests.RequestException as e:
-            raise ConnectionError(f"Failed to download from {IP2LOCATION_V6_URL}") from e
+            raise ConnectionError(f"Failed to download from {self.config.get_url_ip_v6()}") from e
         
     def _descompress(self, data: bytes) -> bytes:
         try:
@@ -51,23 +46,28 @@ class IP2LocationIPV6Fetcher:
             raise ValueError("Invalid ZIP file") from e
 
     def _load_into_duckdb(self, csv_bytes: bytes):
-        self.TMP_DIR.mkdir(parents=True, exist_ok=True)
-        tmp_csv_path = self.TMP_DIR / f"ip2location_v6_{datetime.now().strftime('%Y%m%d%H%M%S')}.csv"
+        cfg = self.config
 
+        cfg.get_temp_path().mkdir(parents=True, exist_ok=True)
+
+        tmp_csv_path = cfg.get_ip_v6_temp_csv_path()
         tmp_csv_path.write_bytes(csv_bytes)
 
-        conn = GeoIPXDataBase().conn
+        db = GeoIPXDataBase()
+        conn = db.conn
 
-        schema_base = Path(__file__).parents[4] / "db_geoipx" / "schema" / "ip" / "ip2location"
+        try:
+            db.begin_transaction()
 
-        create_v6_sql = (schema_base / "v6" / "ip2location_ip_v6.sql").read_text()
+            conn.execute(cfg.sql_drop_table_ip_v6())
 
-        conn.execute(create_v6_sql)
+            conn.execute(cfg.sql_create_table_ip_v6())
 
-        loaders_base = Path(__file__).parents[4] / "db_geoipx" / "queries" / "loaders" / "ip2location" / "ip"
+            conn.execute(cfg.sql_loader_ip_v6(tmp_csv_path))
 
-        loader_v6 = (loaders_base / "v6" / "ip2location_loader_ip_v6.sql").read_text().replace("{csv_path}", str(tmp_csv_path))
-
-        conn.execute(loader_v6)
-
-        tmp_csv_path.unlink()
+            db.commit_transaction()
+        except Exception as e:
+            db.rollback_transaction()
+            raise
+        finally:
+            tmp_csv_path.unlink()
