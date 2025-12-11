@@ -2,11 +2,8 @@ import io
 import zipfile
 import requests
 from pathlib import Path
-from datetime import datetime
 from geoipx.infrastructure.db_geoipx.connection.connection import GeoIPXDataBase
-from geoipx.infrastructure.providers.iplocate.config.config import IPLocateConfig
-
-IPLOCATE_IP_COUNTRY_URL = "https://github.com/iplocate/ip-address-databases/raw/refs/heads/main/ip-to-country/ip-to-country.csv.zip"
+from geoipx.infrastructure.providers.iplocate.config_provider.config_iplocate import IPLocateConfig
 
 class IPLocateCountryIPFetcher:
 
@@ -23,13 +20,13 @@ class IPLocateCountryIPFetcher:
     
     def _download(self) -> bytes:
         try:
-            res = requests.get(IPLOCATE_IP_COUNTRY_URL, timeout=30)
+            res = requests.get(self.config.get_url_country(), timeout=30)
             res.raise_for_status()
             return res.content
         except requests.exceptions.Timeout as e:
-            raise TimeoutError(f"Request to {IPLOCATE_IP_COUNTRY_URL} timed out") from e
+            raise TimeoutError(f"Request to {self.config.get_url_country()} timed out") from e
         except requests.RequestException as e:
-            raise ConnectionError(f"Failed to download from {IPLOCATE_IP_COUNTRY_URL}") from e
+            raise ConnectionError(f"Failed to download from {self.config.get_url_country()}") from e
         
     def _descompress(self, data: bytes) -> bytes:
         try:
@@ -49,7 +46,7 @@ class IPLocateCountryIPFetcher:
         
         cfg.get_temp_path().mkdir(parents=True, exist_ok=True)
 
-        tmp_csv_path = cfg.get_temp_csv_path()
+        tmp_csv_path = cfg.get_country_temp_csv_path()
         tmp_csv_path.write_bytes(csv_bytes)
 
         db = GeoIPXDataBase()
@@ -58,14 +55,14 @@ class IPLocateCountryIPFetcher:
         try:
             db.begin_transaction()
 
-            conn.execute(cfg.sql_drop_v4())
-            conn.execute(cfg.sql_drop_v6())
+            conn.execute(cfg.sql_drop_country_v4())
+            conn.execute(cfg.sql_drop_country_v6())
 
-            conn.execute(cfg.sql_create_v4())
-            conn.execute(cfg.sql_create_v6())
+            conn.execute(cfg.sql_create_country_v4())
+            conn.execute(cfg.sql_create_country_v6())
 
-            conn.execute(cfg.sql_loader_v4(tmp_csv_path))
-            conn.execute(cfg.sql_loader_v6(tmp_csv_path))
+            conn.execute(cfg.sql_loader_country_v4(tmp_csv_path))
+            conn.execute(cfg.sql_loader_country_v6(tmp_csv_path))
 
             db.commit_transaction()
         except Exception as e:
@@ -73,5 +70,3 @@ class IPLocateCountryIPFetcher:
             raise e
         finally:
             tmp_csv_path.unlink(missing_ok=True)
-
-IPLocateCountryIPFetcher().fetch()
