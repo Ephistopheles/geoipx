@@ -2,7 +2,7 @@ import json
 from enum import Enum
 from datetime import datetime
 from typing import Optional, Dict
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field, asdict, is_dataclass
 from geoipx.infrastructure.metadata.models.providers.dbip.dbip_metadata_model import DBIPMetadataModel
 from geoipx.infrastructure.metadata.enums.geoipx_metadata_status_enums import GeoIPXMetadataStatusGlobalEnum
 from geoipx.infrastructure.metadata.models.providers.iplocate.iplocate_metadata_model import IPLocateMetadataModel
@@ -43,7 +43,10 @@ class GeoIPXMetadataModel:
         providers = {}
 
         for key, model_class in provider_map.items():
-            providers[key] = model_class(**providers_raw.get(key, {}))
+            if hasattr(model_class, "from_dict"):
+                providers[key] = model_class.from_dict(providers_raw.get(key, {}))
+            else:
+                providers[key] = model_class(**providers_raw.get(key, {}))
 
         raw["providers"] = providers
 

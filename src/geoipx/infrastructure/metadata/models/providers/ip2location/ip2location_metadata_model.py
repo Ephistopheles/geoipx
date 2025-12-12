@@ -1,14 +1,40 @@
 from typing import Optional
 from datetime import datetime
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from geoipx.infrastructure.metadata.enums.geoipx_metadata_status_enums import GeoIPXMetadataStatusProviderEnum
 
 @dataclass
-class IP2LocationMetadataModel:
-
+class BaseProviderPropertiesModel:
     last_update: Optional[datetime | None] = None
     status: GeoIPXMetadataStatusProviderEnum = GeoIPXMetadataStatusProviderEnum.NEVER_RUN
     last_error: Optional[str | None] = None
     rate_limit_remaining: Optional[int | None] = None
     rate_limit_reset_at: Optional[datetime | None] = None
     records_count: Optional[int | None] = None
+
+@dataclass
+class IP2LocationIPv4MetadataModel(BaseProviderPropertiesModel):
+    pass
+
+@dataclass
+class IP2LocationIPv6MetadataModel(BaseProviderPropertiesModel):
+    pass
+
+@dataclass
+class IP2LocationIPMetadataModel:
+    v4: IP2LocationIPv4MetadataModel = field(default_factory=IP2LocationIPv4MetadataModel)
+    v6: IP2LocationIPv6MetadataModel = field(default_factory=IP2LocationIPv6MetadataModel)
+
+@dataclass
+class IP2LocationMetadataModel:
+    ip: IP2LocationIPMetadataModel = field(default_factory=IP2LocationIPMetadataModel)
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        ip_data = data.get("ip", {})
+        return cls(
+            ip=IP2LocationIPMetadataModel(
+                v4=IP2LocationIPv4MetadataModel(**ip_data.get("v4", {})),
+                v6=IP2LocationIPv6MetadataModel(**ip_data.get("v6", {}))
+            )
+        )
