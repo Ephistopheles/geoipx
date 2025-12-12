@@ -1,0 +1,1 @@
+SELECT metadata FROM geoipx_metadata;

@@ -1,0 +1,1 @@
+INSERT INTO geoipx_metadata (metadata) VALUES ('{{JSON_METADATA}}');
