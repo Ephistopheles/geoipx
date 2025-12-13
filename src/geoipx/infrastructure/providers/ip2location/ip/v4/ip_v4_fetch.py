@@ -52,8 +52,7 @@ class IP2LocationIPV4Fetcher:
         except zipfile.BadZipFile as e:
             raise ValueError("Invalid ZIP file") from e
 
-    def _load_into_duckdb(self, csv_bytes: bytes):
-        print("Loading into duckdb")
+    def _load_into_duckdb(self, csv_bytes: bytes) -> int:
         cfg = self.config
 
         cfg.get_temp_path().mkdir(parents=True, exist_ok=True)

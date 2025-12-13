@@ -6,7 +6,6 @@ from geoipx.infrastructure.providers.dbip.ip.city.ip_city_fetch import DBIPCityI
 from geoipx.infrastructure.providers.ip2location.ip.v4.ip_v4_fetch import IP2LocationIPV4Fetcher
 from geoipx.infrastructure.providers.ip2location.ip.v6.ip_v6_fetch import IP2LocationIPV6Fetcher
 from geoipx.infrastructure.providers.dbip.ip.country.ip_country_fetch import DBIPCountryIPFetcher
-from geoipx.infrastructure.metadata.models.geoipx.geoipx_metadata_model import GeoIPXMetadataModel
 from geoipx.infrastructure.providers.iplocate.ip.country.ip_country_fetch import IPLocateCountryIPFetcher
 from geoipx.infrastructure.metadata.enums.geoipx_metadata_status_enums import GeoIPXMetadataStatusGlobalEnum, GeoIPXMetadataStatusProviderEnum
 
@@ -29,7 +28,13 @@ class GeoIPXOrchestrator:
         MetadataManager().save_metadata(metadata)
 
     def run_ip2location_provider(self):
-        pass
+        metadata = MetadataManager().load_metadata()
+        metadata_provider = metadata.providers["ip2location"]
+
+        self._process_task(metadata, metadata_provider.ip.v4, IP2LocationIPV4Fetcher)
+        self._process_task(metadata, metadata_provider.ip.v6, IP2LocationIPV6Fetcher)
+
+        MetadataManager().save_metadata(metadata)
 
     def run_iplocate_provider(self):
         metadata = MetadataManager().load_metadata()
@@ -67,8 +72,10 @@ class GeoIPXOrchestrator:
                 task_node.status = GeoIPXMetadataStatusProviderEnum.FAILED
                 task_node.last_error = result.error_message or "An unknown error occurred"
 
+# pruebas locales
 if __name__ == "__main__":
     orchestrator = GeoIPXOrchestrator()
     orchestrator.run_dbip_provider()
+    orchestrator.run_ip2location_provider()
     orchestrator.run_iplocate_provider()
 
