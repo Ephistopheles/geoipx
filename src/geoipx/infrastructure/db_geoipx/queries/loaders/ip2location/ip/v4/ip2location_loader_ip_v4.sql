@@ -52,4 +52,4 @@ SELECT
     longitude,
     zip_code,
     timezone
-FROM raw:
+FROM raw;

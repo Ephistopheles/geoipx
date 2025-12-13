@@ -38,6 +38,9 @@ class IP2LocationConfig:
       tpl = (self._loader_ip_v4_base_path() / "v4" / f"{self._loader_ip_v4()}.sql").read_text()
       return tpl.replace("{csv_path}", str(csv_path))
 
+    def sql_count_ip_v4(self) -> str:
+      return f"SELECT COUNT(*) FROM {self._table_ip_v4()};"
+
     def sql_drop_table_ip_v4(self) -> str:
       return f"DROP TABLE IF EXISTS {self._table_ip_v4()};"
 
@@ -69,6 +72,9 @@ class IP2LocationConfig:
     def sql_loader_ip_v6(self, csv_path: Path) -> str:
       tpl = (self._loader_ip_v6_base_path() / "v6" / f"{self._loader_ip_v6()}.sql").read_text()
       return tpl.replace("{csv_path}", str(csv_path))
+
+    def sql_count_ip_v6(self) -> str:
+      return f"SELECT COUNT(*) FROM {self._table_ip_v6()};"
 
     def sql_drop_table_ip_v6(self) -> str:
       return f"DROP TABLE IF EXISTS {self._table_ip_v6()};"
