@@ -1,7 +1,7 @@
 from typing import Optional
 from datetime import datetime
 from dataclasses import dataclass, field
-from geoipx.infrastructure.metadata.enums.geoipx_metadata_status_enums import GeoIPXMetadataStatusProviderEnum
+from geoipx.infrastructure.metadata.enums.metadata_status_enums import GeoIPXMetadataStatusProviderEnum
 
 @dataclass
 class BaseProviderPropertiesModel:

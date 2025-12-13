@@ -1,8 +1,8 @@
 import io
 import zipfile
 import requests
-from geoipx.infrastructure.db_geoipx.connection.connection import GeoIPXDataBase
-from geoipx.infrastructure.providers.result_model.ProviderFetchResult import ProviderFetchResult
+from geoipx.infrastructure.db_geoipx.connection.database_connection import GeoIPXDataBase
+from geoipx.infrastructure.providers.result_model.provider_fetch_result import ProviderFetchResult
 from geoipx.infrastructure.providers.iplocate.config_provider.config_iplocate import IPLocateConfig
 
 class IPLocateCountryIPFetcher:

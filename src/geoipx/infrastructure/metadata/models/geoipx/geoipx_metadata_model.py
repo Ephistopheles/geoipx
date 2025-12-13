@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Optional, Dict
 from dataclasses import dataclass, field, asdict, is_dataclass
 from geoipx.infrastructure.metadata.models.providers.dbip.dbip_metadata_model import DBIPMetadataModel
-from geoipx.infrastructure.metadata.enums.geoipx_metadata_status_enums import GeoIPXMetadataStatusGlobalEnum
+from geoipx.infrastructure.metadata.enums.metadata_status_enums import GeoIPXMetadataStatusGlobalEnum
 from geoipx.infrastructure.metadata.models.providers.iplocate.iplocate_metadata_model import IPLocateMetadataModel
 from geoipx.infrastructure.metadata.models.providers.ip2location.ip2location_metadata_model import IP2LocationMetadataModel
 

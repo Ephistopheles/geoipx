@@ -1,11 +1,11 @@
 import io
 import gzip
 import requests
-from geoipx.infrastructure.db_geoipx.connection.connection import GeoIPXDataBase
+from geoipx.infrastructure.db_geoipx.connection.database_connection import GeoIPXDataBase
 from geoipx.infrastructure.providers.dbip.config_provider.config_dbip import DBIPConfig
-from geoipx.infrastructure.providers.result_model.ProviderFetchResult import ProviderFetchResult
+from geoipx.infrastructure.providers.result_model.provider_fetch_result import ProviderFetchResult
 
-class DBIPCityIPFetcher:
+class DBIPASNFetcher:
 
     def __init__(self):
         self.config = DBIPConfig()
@@ -22,13 +22,13 @@ class DBIPCityIPFetcher:
     
     def _download(self) -> bytes:
         try:
-            res = requests.get(self.config.get_url_city(), timeout=30)
+            res = requests.get(self.config.get_url_asn(), timeout=30)
             res.raise_for_status()
             return res.content
         except requests.exceptions.Timeout as e:
-            raise TimeoutError(f"Request to {self.config.get_url_city()} timed out") from e
+            raise TimeoutError(f"Request to {self.config.get_url_asn()} timed out") from e
         except requests.RequestException as e:
-            raise ConnectionError(f"Failed to download from {self.config.get_url_city()}") from e
+            raise ConnectionError(f"Failed to download from {self.config.get_url_asn()}") from e
         
     def _descompress(self, data: bytes) -> bytes:
         try:
@@ -45,30 +45,30 @@ class DBIPCityIPFetcher:
 
         cfg.get_temp_path().mkdir(parents=True, exist_ok=True)
 
-        tmp_csv_path = cfg.get_city_temp_csv_path()
+        tmp_csv_path = cfg.get_asn_temp_csv_path()
         tmp_csv_path.write_bytes(csv_bytes)
-        
+
         db = GeoIPXDataBase()
         conn = db.conn
 
         try:
             db.begin_transaction()
 
-            conn.execute(cfg.sql_drop_city_v4())
-            conn.execute(cfg.sql_drop_city_v6())
+            conn.execute(cfg.sql_drop_asn_v4())
+            conn.execute(cfg.sql_drop_asn_v6())
 
-            conn.execute(cfg.sql_create_city_v4())
-            conn.execute(cfg.sql_create_city_v6())
+            conn.execute(cfg.sql_create_asn_v4())
+            conn.execute(cfg.sql_create_asn_v6())
 
-            conn.execute(cfg.sql_loader_city_v4(tmp_csv_path))
-            conn.execute(cfg.sql_loader_city_v6(tmp_csv_path))
+            conn.execute(cfg.sql_loader_asn_v4(tmp_csv_path))
+            conn.execute(cfg.sql_loader_asn_v6(tmp_csv_path))
 
             db.commit_transaction()
 
-            city_v4_count = conn.execute(cfg.sql_count_city_v4()).fetchone()[0]
-            city_v6_count = conn.execute(cfg.sql_count_city_v6()).fetchone()[0]
+            asn_v4_count = conn.execute(cfg.sql_count_asn_v4()).fetchone()[0]
+            asn_v6_count = conn.execute(cfg.sql_count_asn_v6()).fetchone()[0]
             
-            return city_v4_count + city_v6_count
+            return asn_v4_count + asn_v6_count
         except Exception as e:
             db.rollback_transaction()
             raise e

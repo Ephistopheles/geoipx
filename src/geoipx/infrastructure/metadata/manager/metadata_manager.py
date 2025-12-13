@@ -1,5 +1,5 @@
 from pathlib import Path
-from geoipx.infrastructure.db_geoipx.connection.connection import GeoIPXDataBase
+from geoipx.infrastructure.db_geoipx.connection.database_connection import GeoIPXDataBase
 from geoipx.infrastructure.metadata.models.geoipx.geoipx_metadata_model import GeoIPXMetadataModel
 
 class MetadataManager:

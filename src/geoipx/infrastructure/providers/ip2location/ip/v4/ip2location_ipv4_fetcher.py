@@ -1,11 +1,11 @@
 import io
 import zipfile
 import requests
-from geoipx.infrastructure.db_geoipx.connection.connection import GeoIPXDataBase
-from geoipx.infrastructure.providers.result_model.ProviderFetchResult import ProviderFetchResult
+from geoipx.infrastructure.db_geoipx.connection.database_connection import GeoIPXDataBase
+from geoipx.infrastructure.providers.result_model.provider_fetch_result import ProviderFetchResult
 from geoipx.infrastructure.providers.ip2location.config_provider.config_ip2location import IP2LocationConfig
 
-class IP2LocationIPV6Fetcher:
+class IP2LocationIPV4Fetcher:
 
     def __init__(self):
         self.config = IP2LocationConfig()
@@ -23,17 +23,17 @@ class IP2LocationIPV6Fetcher:
     def _download(self) -> bytes:
         try:
             # pruebas locales
-            # res = requests.get(self.config.get_url_ip_v6(), timeout=30)
+            # res = requests.get(self.config.get_url_ip_v4(), timeout=30)
             # res.raise_for_status()
             # return res.content
 
-            with open("/home/memphis/Proyects/workspace-back/geoipx/IP2LOCATION-LITE-DB11.IPV6.CSV.zip", "rb") as f:
+            with open("/home/memphis/Proyects/workspace-back/geoipx/IP2LOCATION-LITE-DB11.CSV.zip", "rb") as f:
                 return f.read()
 
         except requests.exceptions.Timeout as e:
-            raise TimeoutError(f"Request to {self.config.get_url_ip_v6()} timed out") from e
+            raise TimeoutError(f"Request to {self.config.get_url_ip_v4()} timed out") from e
         except requests.RequestException as e:
-            raise ConnectionError(f"Failed to download from {self.config.get_url_ip_v6()}") from e
+            raise ConnectionError(f"Failed to download from {self.config.get_url_ip_v4()}") from e
         
     def _descompress(self, data: bytes) -> bytes:
         try:
@@ -57,7 +57,7 @@ class IP2LocationIPV6Fetcher:
 
         cfg.get_temp_path().mkdir(parents=True, exist_ok=True)
 
-        tmp_csv_path = cfg.get_ip_v6_temp_csv_path()
+        tmp_csv_path = cfg.get_ip_v4_temp_csv_path()
         tmp_csv_path.write_bytes(csv_bytes)
 
         db = GeoIPXDataBase()
@@ -66,15 +66,15 @@ class IP2LocationIPV6Fetcher:
         try:
             db.begin_transaction()
 
-            conn.execute(cfg.sql_drop_table_ip_v6())
+            conn.execute(cfg.sql_drop_table_ip_v4())
 
-            conn.execute(cfg.sql_create_table_ip_v6())
+            conn.execute(cfg.sql_create_table_ip_v4())
 
-            conn.execute(cfg.sql_loader_ip_v6(tmp_csv_path))
+            conn.execute(cfg.sql_loader_ip_v4(tmp_csv_path))
 
             db.commit_transaction()
 
-            return conn.execute(cfg.sql_count_ip_v6()).fetchone()[0]
+            return conn.execute(cfg.sql_count_ip_v4()).fetchone()[0]
         except Exception as e:
             db.rollback_transaction()
             raise e
