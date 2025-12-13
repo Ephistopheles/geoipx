@@ -8,3 +8,5 @@ CREATE TABLE IF NOT EXISTS dbip_city_ip_v6 (
    latitude VARCHAR(24),
    longitude VARCHAR(24)
 );
+
+CREATE INDEX IF NOT EXISTS idx_dbip_city_ip_v6_ip_start_end ON dbip_city_ip_v6 (ip_start, ip_end);

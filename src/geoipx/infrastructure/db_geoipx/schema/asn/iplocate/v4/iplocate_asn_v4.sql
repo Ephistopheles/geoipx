@@ -6,3 +6,5 @@ CREATE TABLE IF NOT EXISTS iplocate_asn_v4 (
     org VARCHAR(64),
     domain VARCHAR(64)
 );
+
+CREATE INDEX IF NOT EXISTS idx_iplocate_asn_v4_network ON iplocate_asn_v4 (network);
