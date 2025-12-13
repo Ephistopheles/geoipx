@@ -8,7 +8,7 @@ class MetadataManager:
         self.db = GeoIPXDataBase()
 
     def load_metadata(self):
-       extractor_path = Path(__file__).parents[2] / "db_geoipx" / "queries" / "extractors" / "metadata" / "geoipx_metadata_extractor.sql"
+       extractor_path = Path(__file__).parents[2] / "db_geoipx" / "queries" / "extractors" / "metadata" / "geoipx_extractor_metadata.sql"
 
        conn = self.db.conn
 
