@@ -15,6 +15,7 @@ class IPLocateCountryIPFetcher:
             compressed = self._download()
             decompressed = self._descompress(compressed)
             records_count = self._load_into_duckdb(decompressed)
+
             return ProviderFetchResult(success=True, error_message=None, records_count=records_count)
         except Exception as e:
             return ProviderFetchResult(success=False, error_message=str(e), records_count=None)

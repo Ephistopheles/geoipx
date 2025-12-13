@@ -18,7 +18,7 @@ class DBIPCityIPFetcher:
 
             return ProviderFetchResult(success=True, error_message=None, records_count=records_count)
         except Exception as e:
-            raise RuntimeError("Failed to fetch and process data") from e
+            return ProviderFetchResult(success=False, error_message=str(e), records_count=None)
     
     def _download(self) -> bytes:
         try:
