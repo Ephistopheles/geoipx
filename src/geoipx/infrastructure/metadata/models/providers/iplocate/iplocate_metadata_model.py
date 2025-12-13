@@ -43,6 +43,10 @@ class IPLocateMetadataModel:
     asn: IPLocateASNMetadataModel = field(default_factory=IPLocateASNMetadataModel)
     ip: IPLocateIPMetadataModel = field(default_factory=IPLocateIPMetadataModel)
 
+    def iter_tasks(self):
+        yield self.asn
+        yield self.ip.country
+
     @classmethod
     def from_dict(cls, data: dict):
         asn_data = data.get("asn", {})

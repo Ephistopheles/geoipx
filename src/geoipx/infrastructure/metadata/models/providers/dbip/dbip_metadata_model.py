@@ -48,6 +48,11 @@ class DBIPMetadataModel:
     asn: DBIPASNMetadataModel = field(default_factory=DBIPASNMetadataModel)
     ip: DBIPIPMetadataModel = field(default_factory=DBIPIPMetadataModel)
 
+    def iter_tasks(self):
+        yield self.asn
+        yield self.ip.city
+        yield self.ip.country
+
     @classmethod
     def from_dict(cls, data: dict):
         asn_data = data.get("asn", {})

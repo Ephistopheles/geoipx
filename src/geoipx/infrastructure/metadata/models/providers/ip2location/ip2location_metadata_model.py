@@ -51,6 +51,10 @@ class IP2LocationIPMetadataModel:
 class IP2LocationMetadataModel:
     ip: IP2LocationIPMetadataModel = field(default_factory=IP2LocationIPMetadataModel)
 
+    def iter_tasks(self):
+        yield self.ip.v4
+        yield self.ip.v6
+
     @classmethod
     def from_dict(cls, data: dict):
         ip_data = data.get("ip", {})
