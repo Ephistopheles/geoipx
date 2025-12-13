@@ -33,6 +33,12 @@ class GeoIPXMetadataModel:
     def to_model(json_str: str):
         raw = json.loads(json_str)
 
+        if raw.get("last_global_update"):
+            raw["last_global_update"] = datetime.fromisoformat(raw["last_global_update"])
+
+        if raw.get("global_status"):
+            raw["global_status"] = GeoIPXMetadataStatusGlobalEnum(raw["global_status"])
+
         provider_map = {
             "dbip": DBIPMetadataModel,
             "ip2location": IP2LocationMetadataModel,

@@ -50,6 +50,12 @@ class DBIPConfig:
         tpl = (self._loaders_country_base_path() / "v6" / f"{self._loader_country_v6()}.sql").read_text()
         return tpl.replace("{csv_path}", str(csv_path))
 
+    def sql_count_country_v4(self) -> str:
+        return f"SELECT COUNT(*) FROM {self._table_country_v4()};"
+
+    def sql_count_country_v6(self) -> str:
+        return f"SELECT COUNT(*) FROM {self._table_country_v6()};"
+
     def sql_drop_country_v4(self) -> str:
         return f"DROP TABLE IF EXISTS {self._table_country_v4()};"
 
@@ -97,6 +103,12 @@ class DBIPConfig:
         tpl = (self._loaders_city_base_path() / "v6" / f"{self._loader_city_v6()}.sql").read_text()
         return tpl.replace("{csv_path}", str(csv_path))
 
+    def sql_count_city_v4(self) -> str:
+        return f"SELECT COUNT(*) FROM {self._table_city_v4()};"
+
+    def sql_count_city_v6(self) -> str:
+        return f"SELECT COUNT(*) FROM {self._table_city_v6()};"
+
     def sql_drop_city_v4(self) -> str:
         return f"DROP TABLE IF EXISTS {self._table_city_v4()};"
 
@@ -143,6 +155,12 @@ class DBIPConfig:
     def sql_loader_asn_v6(self, csv_path: Path) -> str:
         tpl = (self._loaders_asn_base_path() / "v6" / f"{self._loader_asn_v6()}.sql").read_text()
         return tpl.replace("{csv_path}", str(csv_path))
+
+    def sql_count_asn_v4(self) -> str:
+        return f"SELECT COUNT(*) FROM {self._table_asn_v4()};"
+
+    def sql_count_asn_v6(self) -> str:
+        return f"SELECT COUNT(*) FROM {self._table_asn_v6()};"
 
     def sql_drop_asn_v4(self) -> str:
         return f"DROP TABLE IF EXISTS {self._table_asn_v4()};"

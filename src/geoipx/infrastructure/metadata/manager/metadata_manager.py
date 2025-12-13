@@ -1,6 +1,4 @@
-import json
 from pathlib import Path
-from datetime import datetime
 from geoipx.infrastructure.db_geoipx.connection.connection import GeoIPXDataBase
 from geoipx.infrastructure.metadata.models.geoipx.geoipx_metadata_model import GeoIPXMetadataModel
 
@@ -18,7 +16,7 @@ class MetadataManager:
            result = conn.execute(extractor_path.read_text())
 
            return GeoIPXMetadataModel.to_model(result.fetchone()[0])
-       except Exception as e:
+       except Exception:
            return GeoIPXMetadataModel()
 
     def save_metadata(self, metadata: GeoIPXMetadataModel):

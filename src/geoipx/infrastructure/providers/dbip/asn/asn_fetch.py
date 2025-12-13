@@ -1,22 +1,24 @@
 import io
 import gzip
 import requests
-from pathlib import Path
 from geoipx.infrastructure.db_geoipx.connection.connection import GeoIPXDataBase
 from geoipx.infrastructure.providers.dbip.config_provider.config_dbip import DBIPConfig
+from geoipx.infrastructure.providers.result_model.ProviderFetchResult import ProviderFetchResult
 
 class DBIPASNFetcher:
 
     def __init__(self):
         self.config = DBIPConfig()
     
-    def fetch(self):
+    def fetch(self) -> ProviderFetchResult:
         try:
             compressed = self._download()
             decompressed = self._descompress(compressed)
-            self._load_into_duckdb(decompressed)
+            records_count = self._load_into_duckdb(decompressed)
+
+            return ProviderFetchResult(success=True, error_message=None, records_count=records_count)
         except Exception as e:
-            raise RuntimeError("Failed to fetch and process data") from e
+            return ProviderFetchResult(success=False, error_message=str(e), records_count=None)
     
     def _download(self) -> bytes:
         try:
@@ -38,7 +40,7 @@ class DBIPASNFetcher:
         except OSError as e:
             raise ValueError("Invalid GZ file") from e
         
-    def _load_into_duckdb(self, csv_bytes: bytes):
+    def _load_into_duckdb(self, csv_bytes: bytes) -> int:
         cfg = self.config
 
         cfg.get_temp_path().mkdir(parents=True, exist_ok=True)
@@ -62,6 +64,11 @@ class DBIPASNFetcher:
             conn.execute(cfg.sql_loader_asn_v6(tmp_csv_path))
 
             db.commit_transaction()
+
+            asn_v4_count = conn.execute(cfg.sql_count_asn_v4()).fetchone()[0]
+            asn_v6_count = conn.execute(cfg.sql_count_asn_v6()).fetchone()[0]
+            
+            return asn_v4_count + asn_v6_count
         except Exception as e:
             db.rollback_transaction()
             raise e

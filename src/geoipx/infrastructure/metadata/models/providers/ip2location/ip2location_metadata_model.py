@@ -8,9 +8,31 @@ class BaseProviderPropertiesModel:
     last_update: Optional[datetime | None] = None
     status: GeoIPXMetadataStatusProviderEnum = GeoIPXMetadataStatusProviderEnum.NEVER_RUN
     last_error: Optional[str | None] = None
-    rate_limit_remaining: Optional[int | None] = None
+    rate_limit_remaining: Optional[int | None] = 5
     rate_limit_reset_at: Optional[datetime | None] = None
     records_count: Optional[int | None] = None
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        if data.get("status"):
+            try:
+                data["status"] = GeoIPXMetadataStatusProviderEnum(data["status"])
+            except ValueError:
+                pass
+
+        if data.get("last_update") and isinstance(data["last_update"], str):
+            try:
+                data["last_update"] = datetime.fromisoformat(data["last_update"])
+            except ValueError:
+                pass
+
+        if data.get("rate_limit_reset_at") and isinstance(data["rate_limit_reset_at"], str):
+            try:
+                data["rate_limit_reset_at"] = datetime.fromisoformat(data["rate_limit_reset_at"])
+            except ValueError:
+                pass
+
+        return cls(**data)
 
 @dataclass
 class IP2LocationIPv4MetadataModel(BaseProviderPropertiesModel):
@@ -34,7 +56,7 @@ class IP2LocationMetadataModel:
         ip_data = data.get("ip", {})
         return cls(
             ip=IP2LocationIPMetadataModel(
-                v4=IP2LocationIPv4MetadataModel(**ip_data.get("v4", {})),
-                v6=IP2LocationIPv6MetadataModel(**ip_data.get("v6", {}))
+                v4=IP2LocationIPv4MetadataModel.from_dict(ip_data.get("v4", {})),
+                v6=IP2LocationIPv6MetadataModel.from_dict(ip_data.get("v6", {}))
             )
         )
