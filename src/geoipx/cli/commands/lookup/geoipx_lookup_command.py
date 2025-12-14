@@ -13,36 +13,36 @@ geoipx_lookup_command = typer.Typer()
 def lookup(
     ip: str = typer.Argument(
         ...,
-        help="The IP address to lookup."
+        help="The IP address to lookup.",
     ),
     json: bool = typer.Option(
         False,
         "--json",
         "-j",
         help="Output result in JSON format.",
-        is_eager=True
+        is_eager=True,
     ),
     xml: bool = typer.Option(
         False,
         "--xml",
         "-x",
         help="Output result in XML format.",
-        is_eager=True
+        is_eager=True,
     ),
     csv: bool = typer.Option(
         False,
         "--csv",
         "-c",
         help="Output result in CSV format.",
-        is_eager=True
+        is_eager=True,
     ),
     output_dir: str = typer.Option(
         None,
         "--output",
         "-o",
         help="Directory path to save the output. If not provided, uses the current working directory.",
-        is_eager=True
-    )
+        is_eager=True,
+    ),
 ):
     """
     Lookup the geographical information for a given IP address.

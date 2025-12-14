@@ -10,15 +10,15 @@ def global_callback(
         "--version",
         "-v",
         help="Show the version of GeoIPX.",
-        is_eager=True
+        is_eager=True,
     ),
     geoipx_help: bool = typer.Option(
         False,
         "--help",
         "-h",
         help="Show the help of GeoIPX.",
-        is_eager=True
-    )
+        is_eager=True,
+    ),
 ) -> None:
     """Global callback for GeoIPX."""
     if geoipx_version:
