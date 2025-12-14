@@ -3,20 +3,20 @@ from rich.panel import Panel
 from rich import print as rich_print
 from geoipx.utils.output_types import OutputType
 from geoipx.domain.geoip.service import GeoIPService
-from geoipx.domain.validation.ip_validator import validate_ip
 from geoipx.exceptions.ip_exceptions import InvalidIPError
+from geoipx.domain.validation.ip_validator import validate_ip
 from geoipx.exceptions.output_format_exceptions import OutputFormatError
 
-geoip_commands = typer.Typer()
+geoipx_lookup_command = typer.Typer()
 
-@geoip_commands.command("lookup")
+@geoipx_lookup_command.command("lookup")
 def lookup(
     ip: str = typer.Argument(
-        ..., 
+        ...,
         help="The IP address to lookup."
     ),
     json: bool = typer.Option(
-        False, 
+        False,
         "--json",
         "-j",
         help="Output result in JSON format.",
@@ -60,3 +60,4 @@ def lookup(
         raise typer.Exit(code=1)
 
     rich_print(Panel(result, title="[bold green]GeoIPX Result", title_align="left", border_style="green"))
+    
