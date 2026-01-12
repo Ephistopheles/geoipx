@@ -31,7 +31,7 @@ class DBIPConfig:
 
     def get_url_country(self) -> str:
         current_date = datetime.now()
-        return f"https://download.db-ip.com/free/dbip-country-lite-{current_date.year}-{current_date.month}.csv.gz"
+        return f"https://download.db-ip.com/free/dbip-country-lite-{current_date.year}-{current_date.strftime("%m")}.csv.gz"
 
     def get_country_temp_csv_path(self) -> Path:
         return self.get_temp_path() / f"dbip_ip_country_{datetime.now().strftime('%Y%m%d%H%M%S')}.csv"
@@ -84,7 +84,7 @@ class DBIPConfig:
 
     def get_url_city(self) -> str:
         current_date = datetime.now()
-        return f"https://download.db-ip.com/free/dbip-city-lite-{current_date.year}-{current_date.month}.csv.gz"
+        return f"https://download.db-ip.com/free/dbip-city-lite-{current_date.year}-{current_date.strftime("%m")}.csv.gz"
 
     def get_city_temp_csv_path(self) -> Path:
         return self.get_temp_path() / f"dbip_ip_city_{datetime.now().strftime('%Y%m%d%H%M%S')}.csv"
@@ -137,7 +137,7 @@ class DBIPConfig:
 
     def get_url_asn(self) -> str:
         current_date = datetime.now()
-        return f"https://download.db-ip.com/free/dbip-asn-lite-{current_date.year}-{current_date.month}.csv.gz"
+        return f"https://download.db-ip.com/free/dbip-asn-lite-{current_date.year}-{current_date.strftime("%m")}.csv.gz"
 
     def get_asn_temp_csv_path(self) -> Path:
         return self.get_temp_path() / f"dbip_ip_asn_{datetime.now().strftime('%Y%m%d%H%M%S')}.csv"
